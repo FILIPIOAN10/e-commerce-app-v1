@@ -53,7 +53,7 @@ public class CategoryController {
             Category saveCategory =categoryService.updateCategory(category,categoryId);
 
             // Trebuie să returnăm rezultatul!
-            return  new ResponseEntity<>("Category with category id"+categoryId,HttpStatus.OK);
+            return  new ResponseEntity<>("Category with category id "+categoryId,HttpStatus.OK);
         } catch (ResponseStatusException e) {
             return new ResponseEntity<>(e.getReason(), e.getStatusCode());
         }
