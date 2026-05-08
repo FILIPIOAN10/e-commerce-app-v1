@@ -1,5 +1,6 @@
 package com.example.sb_ecom_v1.service.impl;
 
+import com.example.sb_ecom_v1.exception.ResourceNotFoundException;
 import com.example.sb_ecom_v1.model.Category;
 import com.example.sb_ecom_v1.repository.CategoryRepository;
 import com.example.sb_ecom_v1.service.CategoryService;
@@ -36,7 +37,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         //Verify if category exist in db
         Category category = categoryRepository.findById(categoryId)
-                        .orElseThrow(() ->new ResponseStatusException(HttpStatus.NOT_FOUND,"Resource Not Found"));
+                        .orElseThrow(() ->new ResourceNotFoundException("Category","categoryId",categoryId));
         // if exist i will delete
         categoryRepository.delete(category);
         return "Category with categoryId: " +categoryId + " deleted successfully !!";
@@ -47,7 +48,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         // 1. verify if exist
         Category existingCategory = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Resource Not Found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Category","categoryId",categoryId));
 
         // 2. update only necessary fields
         existingCategory.setCategoryName(category.getCategoryName());

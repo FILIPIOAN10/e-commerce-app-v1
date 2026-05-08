@@ -43,4 +43,9 @@ public class MyGlobalExceptionHandler {
         // Line 6: Return the map as JSON response
         return  new ResponseEntity<Map<String,String>>(response, HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<String> myResourceNotFoundException(ResourceNotFoundException e){
+        String message = e.getMessage();
+        return new ResponseEntity<>(message,HttpStatus.NOT_FOUND);
+    }
 }
