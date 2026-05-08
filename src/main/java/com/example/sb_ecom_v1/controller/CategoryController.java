@@ -3,6 +3,7 @@ package com.example.sb_ecom_v1.controller;
 
 import com.example.sb_ecom_v1.model.Category;
 import com.example.sb_ecom_v1.service.CategoryService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,13 +14,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
+@AllArgsConstructor
 public class CategoryController {
 
     private CategoryService categoryService;
 
-    public CategoryController(CategoryService categoryService) {
-        this.categoryService = categoryService;
-    }
+
 
     @GetMapping("/public/categories")
     public ResponseEntity<List<Category>> getAllCategories(){

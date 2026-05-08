@@ -3,6 +3,7 @@ package com.example.sb_ecom_v1.service.impl;
 import com.example.sb_ecom_v1.model.Category;
 import com.example.sb_ecom_v1.repository.CategoryRepository;
 import com.example.sb_ecom_v1.service.CategoryService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -13,14 +14,12 @@ import java.util.Optional;
 
 
 @Service
+@AllArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
 
 
     private CategoryRepository categoryRepository;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
-    }
 
     @Override
     public List<Category> getAllCategories() {
