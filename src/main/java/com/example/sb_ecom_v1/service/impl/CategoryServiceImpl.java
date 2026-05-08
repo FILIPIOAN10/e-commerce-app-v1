@@ -1,17 +1,14 @@
 package com.example.sb_ecom_v1.service.impl;
 
-import com.example.sb_ecom_v1.exception.ResourceNotFoundException;
+import com.example.sb_ecom_v1.exceptions.APIException;
+import com.example.sb_ecom_v1.exceptions.ResourceNotFoundException;
 import com.example.sb_ecom_v1.model.Category;
 import com.example.sb_ecom_v1.repository.CategoryRepository;
 import com.example.sb_ecom_v1.service.CategoryService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -24,11 +21,18 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<Category> getAllCategories() {
+        List<Category> categories = categoryRepository.findAll();
+        if(categories.isEmpty())
+            throw new APIException("No category created till now");
          return categoryRepository.findAll();
     }
 
     @Override
     public void createCategory(Category category) {
+        Category savedCategory = categoryRepository.findByCategoryName(category.getCategoryName());
+        if(savedCategory!=null){
+            throw new APIException("Category with this name "+category.getCategoryName()+ "already exists !!!");
+        }
         categoryRepository.save(category);
     }
 
