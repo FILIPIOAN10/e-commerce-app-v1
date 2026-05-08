@@ -1,11 +1,16 @@
 package com.example.sb_ecom_v1.model;
 
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+
 //@Data
 //@NoArgsConstructor
 //@AllArgsConstructor
+@Entity(name = "categories")
 public class Category {
 
+    @Id
     private Long categoryId;
 
     private String categoryName;
