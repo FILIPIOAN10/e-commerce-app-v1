@@ -3,12 +3,16 @@ package com.example.sb_ecom_v1.service.impl;
 import com.example.sb_ecom_v1.exceptions.APIException;
 import com.example.sb_ecom_v1.exceptions.ResourceNotFoundException;
 import com.example.sb_ecom_v1.model.Category;
+import com.example.sb_ecom_v1.payload.CategoryDTO;
+import com.example.sb_ecom_v1.payload.CategoryResponse;
 import com.example.sb_ecom_v1.repository.CategoryRepository;
 import com.example.sb_ecom_v1.service.CategoryService;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -17,48 +21,78 @@ public class CategoryServiceImpl implements CategoryService {
 
 
     private CategoryRepository categoryRepository;
+    private ModelMapper modelMapper;
 
 
     @Override
-    public List<Category> getAllCategories() {
+    public CategoryResponse getAllCategories() {
         List<Category> categories = categoryRepository.findAll();
         if(categories.isEmpty())
             throw new APIException("No category created till now");
-         return categoryRepository.findAll();
+        List<CategoryDTO> categoryDTOS=
+                // converting category to stream
+                categories.stream()
+                        // for every object in the stream we are mapping category to categoryDTO
+                .map(category -> modelMapper.map(category, CategoryDTO.class))
+                .toList();
+        CategoryResponse categoryResponse = new CategoryResponse();
+        categoryResponse.setContent(categoryDTOS);
+        return categoryResponse;
     }
 
     @Override
-    public void createCategory(Category category) {
-        Category savedCategory = categoryRepository.findByCategoryName(category.getCategoryName());
-        if(savedCategory!=null){
-            throw new APIException("Category with this name "+category.getCategoryName()+ "already exists !!!");
+    public CategoryDTO createCategory(CategoryDTO categoryDTO) {
+        //I transform the DTO received from the request into a Category object so I can save it to the database
+        //Because the repository only knows how to save entities (Category), not DTOs.
+        Category category = modelMapper.map(categoryDTO, Category.class);
+        //I search the database to see if a category with the same name already exists.
+        //So as not to save duplicates.
+        Category categoryFromDb = categoryRepository.findByCategoryName(category.getCategoryName());
+        if(categoryFromDb!=null){
+            throw new APIException("Category with this name "+categoryDTO.getCategoryName()+ "already exists !!!");
         }
-        categoryRepository.save(category);
+        //I save the category in the database.
+        Category savedCategory = categoryRepository.save(category);
+        //Transform entity-ul salvat înapoi într-un DTO pe care îl trimit ca response către client.
+        //Because APIs usually return DTOs, not entities directly.
+        return modelMapper.map(savedCategory, CategoryDTO.class);
     }
 
     @Override
-    public String deleteCategory(Long categoryId) {
+    public CategoryDTO deleteCategory(Long categoryId) {
 
-        //Verify if category exist in db
-        Category category = categoryRepository.findById(categoryId)
-                        .orElseThrow(() ->new ResourceNotFoundException("Category","categoryId",categoryId));
-        // if exist i will delete
+        //Search the database for the category to be deleted.
+        //To check if the category exists before deleting.
+        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
+
+        //Delete the category from the database.
+        //Because the delete() method removes the entity from the DB.
         categoryRepository.delete(category);
-        return "Category with categoryId: " +categoryId + " deleted successfully !!";
+        //I transform the deleted category into a DTO and send it back to the client.
+        //So that the client knows which category was deleted.
+        return modelMapper.map(category, CategoryDTO.class);
     }
 
     @Override
-    public Category updateCategory(Category category, Long categoryId) {
+    public CategoryDTO updateCategory(CategoryDTO categoryDTO, Long categoryId) {
 
-        // 1. verify if exist
-        Category existingCategory = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new ResourceNotFoundException("Category","categoryId",categoryId));
+        //I search the database for the category that needs to be modified.
+        //To check if the category with that ID exists.
+        Category savedCategory = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
+        //Transform the DTO received from the request into a Category object.
+        //Because the repository only works with entities.
+        Category category = modelMapper.map(categoryDTO, Category.class);
 
-        // 2. update only necessary fields
-        existingCategory.setCategoryName(category.getCategoryName());
+        //Set the ID of the category to be updated.
+        //Because the DTO in the request may not contain the ID.
+        category.setCategoryId(categoryId);
 
-        // 3. save and return
-        return categoryRepository.save(existingCategory);
+        // Because save() updates if the object already has an ID.
+        savedCategory = categoryRepository.save(category);
+
+        //I transform the updated category into a DTO and send it back to the client.
+        return modelMapper.map(savedCategory, CategoryDTO.class);
     }
 
 
