@@ -1,7 +1,6 @@
-package com.example.sb_ecom_v1.payload;
+package com.example.sb_ecom_v1.model;
 
 import jakarta.persistence.*;
-import jdk.jfr.Category;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,8 +16,10 @@ public class Product {
     private Long productId;
     private String productName;
     private String description;
+    private String image;
     private Integer quantity;
     private double price;
+    private double discount;
     private double specialPrice;
 
     @ManyToOne
