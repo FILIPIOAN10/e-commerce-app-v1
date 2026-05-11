@@ -3,6 +3,7 @@ package com.example.sb_ecom_v1.controller;
 
 import com.example.sb_ecom_v1.model.Product;
 import com.example.sb_ecom_v1.payload.ProductDTO;
+import com.example.sb_ecom_v1.payload.ProductResponse;
 import com.example.sb_ecom_v1.service.ProductService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,5 +23,18 @@ public class ProductController {
                                                  @PathVariable Long categoryId){
        ProductDTO productDTO = productService.addProduct(categoryId,product);
        return new ResponseEntity<>(productDTO, HttpStatus.CREATED);
+    }
+
+
+    @GetMapping("/public/products")
+    public ResponseEntity<ProductResponse> getAllProducts(){
+       ProductResponse productResponse = productService.getAllProducts();
+       return new ResponseEntity<>(productResponse,HttpStatus.OK);
+    }
+
+    @GetMapping("/public/categories/{categoryId}/products")
+    public ResponseEntity<ProductResponse> getProductsByCategory(@PathVariable Long categoryId){
+        ProductResponse productResponse = productService.searchByCategory(categoryId);
+        return new ResponseEntity<>(productResponse,HttpStatus.OK);
     }
 }
