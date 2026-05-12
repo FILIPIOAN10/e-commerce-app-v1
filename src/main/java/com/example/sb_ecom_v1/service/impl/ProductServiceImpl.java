@@ -80,4 +80,30 @@ public class ProductServiceImpl implements ProductService {
         productResponse.setContent(productDTOS);
         return productResponse;
     }
+
+    @Override
+    public ProductDTO updateProduct(ProductDTO productDTO,Long productId) {
+        // Get the existing product from DB
+        // Fetch existing product from DB
+        Product productFromDB = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
+
+        // Update the product info with the one in the request body
+        //automatically converts (maps) the productDTO object into a Product object.
+        //Map incomming DO
+
+        // apply update filed onto the managed DB entity
+        productFromDB.setProductName(productFromDB.getProductName());
+        productFromDB.setDescription(productFromDB.getDescription());
+        productFromDB.setDiscount(productFromDB.getDiscount());
+        productFromDB.setPrice(productFromDB.getPrice());
+        productFromDB.setSpecialPrice(productFromDB.getSpecialPrice());
+        // Save to database
+        // Persist updated product
+        Product savedProduct = productRepository.save(productFromDB);
+
+        return modelMapper.map(savedProduct,ProductDTO.class);
+
+
+    }
 }
