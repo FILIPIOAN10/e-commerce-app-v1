@@ -6,9 +6,13 @@ import com.example.sb_ecom_v1.payload.ProductDTO;
 import com.example.sb_ecom_v1.payload.ProductResponse;
 import com.example.sb_ecom_v1.service.ProductService;
 import lombok.AllArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api")
@@ -19,10 +23,10 @@ public class ProductController {
 
     // add a product to category
     @PostMapping("/admin/categories/{categoryId}/product")
-    public ResponseEntity<ProductDTO> addProduct(@RequestBody Product product,
+    public ResponseEntity<ProductDTO> addProduct(@RequestBody ProductDTO productDTO,
                                                  @PathVariable Long categoryId){
-       ProductDTO productDTO = productService.addProduct(categoryId,product);
-       return new ResponseEntity<>(productDTO, HttpStatus.CREATED);
+       ProductDTO savedProductDTO = productService.addProduct(categoryId,productDTO);
+       return new ResponseEntity<>(savedProductDTO, HttpStatus.CREATED);
     }
 
 
@@ -54,5 +58,11 @@ public class ProductController {
     public ResponseEntity<ProductDTO> deleteProduct(@PathVariable Long  productId){
         ProductDTO deletedProduct = productService.deleteProduct(productId);
         return new ResponseEntity<>(deletedProduct,HttpStatus.OK);
+    }
+    @PutMapping("/product/{productId}/image")
+    public ResponseEntity<ProductDTO> updateProductImage(@PathVariable Long productId,
+                                                         @RequestParam("image")MultipartFile image) throws IOException {
+        ProductDTO upadatedProduct= productService.updateProductImage(productId,image);
+        return new ResponseEntity<>(upadatedProduct,HttpStatus.OK);
     }
 }
