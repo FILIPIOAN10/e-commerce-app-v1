@@ -16,6 +16,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 
+//This is the class that handles the response to unauthorized requests.
+//Executed when:
+//
+//        user does NOT have a token
+//        token is invalid
+//        user is not authenticated
+//
+//        Main method:
 @Component
 public class AuthEntryPointJwt implements AuthenticationEntryPoint {
 
