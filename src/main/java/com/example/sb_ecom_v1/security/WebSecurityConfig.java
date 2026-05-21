@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -130,15 +129,15 @@ public class WebSecurityConfig {
                 User admin = new User("admin","admin@example.com",passwordEncoder.encode("adminPass"));
                 userRepository.save(admin);
             }
-            userRepository.findByUsername("user1").ifPresent(user -> {
+            userRepository.findByUserName("user1").ifPresent(user -> {
                 user.setRoles(userRoles);
                 userRepository.save(user);
             });
-            userRepository.findByUsername("seller1").ifPresent(seller -> {
+            userRepository.findByUserName("seller1").ifPresent(seller -> {
                 seller.setRoles(sellerRoles);
                 userRepository.save(seller);
             });
-            userRepository.findByUsername("admin").ifPresent(admin -> {
+            userRepository.findByUserName("admin").ifPresent(admin -> {
                 admin.setRoles(adminRoles);
                 userRepository.save(admin);
             });
