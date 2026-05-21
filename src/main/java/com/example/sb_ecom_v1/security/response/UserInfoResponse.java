@@ -12,8 +12,8 @@ import java.util.List;
 public class UserInfoResponse {
     private Long id;
 
-    private String jwtToken;
     private String username;
+    private String jwtToken;
     private List<String> roles;
 
 }
