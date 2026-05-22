@@ -54,7 +54,13 @@ public class JwtUtils {
                 .httpOnly(false)
                 .build();
         return cookie;
+    }
+    public ResponseCookie getCleanJwtCookie(){
 
+        ResponseCookie cookie = ResponseCookie.from(jwtCookie,null)
+                .path("/api")
+                .build();
+        return cookie;
     }
 
     // Generating Token from Username
