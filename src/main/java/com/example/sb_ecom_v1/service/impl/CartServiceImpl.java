@@ -17,6 +17,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -87,6 +88,31 @@ public class CartServiceImpl implements CartService {
 
         cartDTO.setProducts(productStream.toList());
         return cartDTO;
+    }
+
+    @Override
+    public List<CartDTO> getAllCarts() {
+        //Get all the carts
+        List<Cart> carts = cartRepository.findAll();
+
+        if (carts.size() == 0) {
+            throw new APIException("No carts exist.");
+        }
+
+        // Transform the list of cart to
+        List<CartDTO> cartDTOS = carts.stream()
+                .map(cart->{
+                    // 1. Convert Cart to CartDTO (no products yet)
+                    CartDTO cartDTO = modelMapper.map(cart,CartDTO.class);
+
+                    // 2. Extract the products from CartItem and convert them to ProductDTO
+                    List<ProductDTO> products = cart.getCartItems().stream()
+                            .map(p->modelMapper.map(p.getProduct(),ProductDTO.class))
+                            .toList();
+                    cartDTO.setProducts(products);
+                    return cartDTO;
+                }).collect(Collectors.toList());
+        return cartDTOS;
     }
 
 
