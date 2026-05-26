@@ -1,7 +1,10 @@
 package com.example.sb_ecom_v1.controller;
 
+import com.example.sb_ecom_v1.model.Cart;
 import com.example.sb_ecom_v1.payload.CartDTO;
+import com.example.sb_ecom_v1.repository.CartRepository;
 import com.example.sb_ecom_v1.service.impl.CartServiceImpl;
+import com.example.sb_ecom_v1.util.AuthUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +19,8 @@ public class CartController {
 
 
     private final CartServiceImpl cartService;
+    private final AuthUtil authUtil;
+    private final CartRepository cartRepository;
 
 
 
@@ -30,5 +35,19 @@ public class CartController {
     public ResponseEntity<List<CartDTO>> getCarts(){
         List<CartDTO> cartDTOS = cartService.getAllCarts();
         return new ResponseEntity<List<CartDTO>>(cartDTOS,HttpStatus.FOUND);
+    }
+
+    @GetMapping("/carts/users/cart")
+    public ResponseEntity<CartDTO> getCartById(){
+        // get the email from user section
+        String emailId = authUtil.loggedInEmail();
+        // getting the cart of the user from db
+        Cart cart = cartRepository.findCartByEmail(emailId);
+        // getting the cartId from the cart
+
+        Long cartId = cart.getCartId();
+        CartDTO cartDTO = cartService.getCart(emailId,cartId);
+
+        return new ResponseEntity<CartDTO>(cartDTO,HttpStatus.OK);
     }
 }
