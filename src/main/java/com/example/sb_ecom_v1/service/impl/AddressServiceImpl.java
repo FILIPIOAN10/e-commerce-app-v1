@@ -7,9 +7,11 @@ import com.example.sb_ecom_v1.payload.AddressDTO;
 import com.example.sb_ecom_v1.repository.AddressRepository;
 import com.example.sb_ecom_v1.service.AddressService;
 import com.example.sb_ecom_v1.util.AuthUtil;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,6 +58,14 @@ public class AddressServiceImpl implements AddressService {
         Address address = addressRepository.findById(addressId)
                 .orElseThrow(()-> new ResourceNotFoundException("Address","addressId",addressId));
         return modelMapper.map(address,AddressDTO.class);
+    }
+
+    @Override
+    public List<AddressDTO> getUserAddresses(User user) {
+        List<Address> addresses = addressRepository.findAll();
+        return addresses.stream()
+                .map(address -> modelMapper.map(address,AddressDTO.class))
+                .collect(Collectors.toList());
     }
 
 
